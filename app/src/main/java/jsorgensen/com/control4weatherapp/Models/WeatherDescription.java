@@ -4,7 +4,6 @@ package jsorgensen.com.control4weatherapp.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class WeatherDescription implements Parcelable{

@@ -23,6 +23,7 @@ public class DetailedForecast implements Parcelable {
     Wind wind;
     Clouds clouds;
     Rain rain;
+    Snow snow;
 
     private void extractJSON(JSONObject json){
         try{
@@ -40,6 +41,9 @@ public class DetailedForecast implements Parcelable {
             JSONObject jsonRain = json.optJSONObject("rain");
             if(jsonRain != null)
                 rain = new Rain(jsonRain);
+            JSONObject jsonSnow = json.optJSONObject("snow");
+            if(jsonSnow != null)
+                snow = new Snow(jsonSnow);
         }catch(Exception e){
 
         }
@@ -59,6 +63,7 @@ public class DetailedForecast implements Parcelable {
             json.put("wind", wind.toJSON());
             json.put("clouds", clouds.toJSON());
             json.put("rain", rain.toJSON());
+            json.put("snow", snow);
         }catch (Exception e){}
 
         return json;
