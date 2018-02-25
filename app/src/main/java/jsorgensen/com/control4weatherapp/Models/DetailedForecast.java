@@ -1,16 +1,35 @@
 package jsorgensen.com.control4weatherapp.Models;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONObject;
 
 
-public class DetailedForecast {
+public class DetailedForecast implements Parcelable {
 
     public DetailedForecast(JSONObject json){
+        extractJSON(json);
+    }
+
+    int id;
+    int timeStamp;
+    String cityName;
+    Sys sys;
+    Coordinates coordinates;
+    Weather weather;
+    Main main;
+    Wind wind;
+    Clouds clouds;
+    Rain rain;
+
+    private void extractJSON(JSONObject json){
         try{
             id = json.getInt("id");
             timeStamp = json.getInt("dt");
             cityName = json.getString("name");
+            sys = new Sys(json.getJSONObject("sys"));
             coordinates = new Coordinates(json.getJSONObject("coord"));
             weather = new Weather(json.getJSONArray("weather"));
             main = new Main(json.getJSONObject("main"));
@@ -26,13 +45,52 @@ public class DetailedForecast {
         }
     }
 
-    int id;
-    int timeStamp;
-    String cityName;
-    Coordinates coordinates;
-    Weather weather;
-    Main main;
-    Wind wind;
-    Clouds clouds;
-    Rain rain;
+    JSONObject toJSON(){
+        JSONObject json = new JSONObject();
+
+        try{
+            json.put("id", id);
+            json.put("dt", timeStamp);
+            json.put("name", cityName);
+            json.put("sys", sys.toJSON());
+            json.put("coordinates", coordinates.toJSON());
+            json.put("weather", weather.toJSON());
+            json.put("main", main.toJSON());
+            json.put("wind", wind.toJSON());
+            json.put("clouds", clouds.toJSON());
+            json.put("rain", rain.toJSON());
+        }catch (Exception e){}
+
+        return json;
+    }
+
+    protected DetailedForecast(Parcel in) {
+        try{
+            String jsonString = in.readString();
+            JSONObject json = new JSONObject(jsonString);
+            extractJSON(json);
+        }catch(Exception e){}
+    }
+
+    public static final Creator<DetailedForecast> CREATOR = new Creator<DetailedForecast>() {
+        @Override
+        public DetailedForecast createFromParcel(Parcel in) {
+            return new DetailedForecast(in);
+        }
+
+        @Override
+        public DetailedForecast[] newArray(int size) {
+            return new DetailedForecast[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(toJSON().toString());
+    }
 }
