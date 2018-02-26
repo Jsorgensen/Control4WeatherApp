@@ -37,7 +37,7 @@ public class DetailedForecast implements Parcelable {
         try{
             id = json.getInt("id");
             timeStamp = json.getInt("dt");
-            localTimeStamp = new Date();
+            localTimeStamp = new Date(json.optLong("localDT", new Date().getTime()));
             cityName = json.getString("name");
             sys = new Sys(json.getJSONObject("sys"));
             coordinates = new Coordinates(json.getJSONObject("coord"));
@@ -62,6 +62,7 @@ public class DetailedForecast implements Parcelable {
         try{
             json.put("id", id);
             json.put("dt", timeStamp);
+            json.put("localDT", localTimeStamp.getTime());
             json.put("name", cityName);
             json.put("sys", sys.toJSON());
             json.put("coord", coordinates.toJSON());

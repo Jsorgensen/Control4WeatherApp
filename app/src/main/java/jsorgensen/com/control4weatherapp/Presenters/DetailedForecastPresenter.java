@@ -59,7 +59,7 @@ public class DetailedForecastPresenter implements Presenter {
         ((TextView)fragment.getView().findViewById(R.id.detailedForecastMinTextView)).setText("Min\n" + forecast.main.tempMin + "°F");
         ((TextView)fragment.getView().findViewById(R.id.detailedForecastMaxTextView)).setText("Max\n" + forecast.main.tempMax + "°F");
         ((TextView)fragment.getView().findViewById(R.id.detailedForecastCityTextView)).setText(forecast.cityName);
-        String timeStamp = new SimpleDateFormat("EEEE MMM dd hh:mm aa").format(forecast.timeStamp);
+        String timeStamp = new SimpleDateFormat("EEEE MMM dd hh:mm aa").format(forecast.localTimeStamp);
         ((TextView)fragment.getView().findViewById(R.id.detailedForecastTimeTextView)).setText(timeStamp);
         String iconURL = Constants.WEATHER_ICON_URL.replace("<WEATHER_ICON>", forecast.weather.descriptions.get(0).icon);
         Picasso.with(activity).load(iconURL).into(((ImageView)fragment.getView().findViewById(R.id.detailedForecastIconImageView)));
