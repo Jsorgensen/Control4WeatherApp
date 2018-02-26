@@ -6,6 +6,8 @@ import android.os.Parcelable;
 
 import org.json.JSONObject;
 
+import java.util.Date;
+
 
 public class DetailedForecast implements Parcelable {
 
@@ -15,6 +17,7 @@ public class DetailedForecast implements Parcelable {
 
     public int id;
     public int timeStamp;
+    public Date localTimeStamp;
     public String cityName;
     public Sys sys;
     public Coordinates coordinates;
@@ -34,6 +37,7 @@ public class DetailedForecast implements Parcelable {
         try{
             id = json.getInt("id");
             timeStamp = json.getInt("dt");
+            localTimeStamp = new Date();
             cityName = json.getString("name");
             sys = new Sys(json.getJSONObject("sys"));
             coordinates = new Coordinates(json.getJSONObject("coord"));

@@ -3,7 +3,6 @@ package jsorgensen.com.control4weatherapp.Services;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 
 import org.json.JSONArray;
@@ -23,6 +22,7 @@ public class WeatherService {
     }
 
     private WeatherService() {
+
     }
 
     public void requestGetWeatherByCityIds(final CityForecastPresenter presenter, String cityIds){
@@ -41,6 +41,30 @@ public class WeatherService {
                                 DetailedForecast forecast = new DetailedForecast(jsonObject);
                                 forecasts.add(forecast);
                             }
+
+                            presenter.receiveWeatherForecasts(forecasts);
+                        }catch (Exception e){}
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        presenter.requestError();
+                    }
+                });
+    }
+
+    public void requestGetWeatherByName(final CityForecastPresenter presenter, String cityName){
+        String url = Constants.FORECAST_BY_NAME_URL.replace("<CITY_NAME>", cityName);
+        AndroidNetworking.get(url)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try{
+                            DetailedForecast forecast = new DetailedForecast(response);
+
+                            ArrayList<DetailedForecast> forecasts = new ArrayList<>();
+                            forecasts.add(forecast);
 
                             presenter.receiveWeatherForecasts(forecasts);
                         }catch (Exception e){}

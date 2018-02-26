@@ -12,16 +12,15 @@ import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
 import jsorgensen.com.control4weatherapp.Adapters.CityForecastAdapter;
@@ -83,45 +82,91 @@ public class CityForecastPresenter implements Presenter {
     }
 
     public void requestData(){
-        String cityForecasts = app.sharedPreferences().getCityForecasts();
+        HashSet<Integer> cityIds = extractPersistedCityIds();
 
-        if(cityForecasts == null){
+        if(cityIds == null){
             setPresets();
         }else{
-            try{
-                JSONArray jsonArray = new JSONArray(cityForecasts);
-                extractForecasts(jsonArray);
-            }catch (Exception e){}
+            if(hasLastRequestTimeElapsed()){
+                requestForecasts(forecasts);
+            }else{
+                try{
+                    extractForecasts(cityIds);
+                }catch (Exception e){}
+            }
         }
+    }
+
+    private HashSet<Integer> extractPersistedCityIds(){
+        String idsString = app.sharedPreferences().getCityIds();
+        if(idsString == null)
+            return null;
+
+        String[] idsArray = idsString.split(",");
+
+        HashSet<Integer> idsSet = new HashSet<>();
+        for(String idString: idsArray){
+            int id = Integer.parseInt(idString);
+            idsSet.add(id);
+        }
+
+        return idsSet;
+    }
+
+    private boolean hasLastRequestTimeElapsed(){
+        Long latestRequestLong = app.sharedPreferences().latestRequest();
+
+        Long currentTime = new Date().getTime();
+
+        Long deltaMinutes = TimeUnit.MILLISECONDS.toMinutes(currentTime - latestRequestLong);
+
+        return deltaMinutes >= 10L;
     }
 
     private void setPresets(){
         selectedCities.clear();
 
-        ArrayList<Integer> cityIds = new ArrayList<>();
+        ArrayList<java.lang.Integer> cityIds = new ArrayList<>();
         cityIds.add(Constants.SALT_LAKE_ID);
         cityIds.add(Constants.SAN_FRANCISCO_ID);
         cityIds.add(Constants.NEW_YORK_ID);
 
+        app.sharedPreferences().setCityIds(joinToString(cityIds));
+
         requestForecasts(joinToString(cityIds));
     }
 
-    private void extractForecasts(JSONArray json){
-        try{
-            forecasts.clear();
+    private void extractForecasts(HashSet<Integer> cityIds){
+        forecasts.clear();
 
-            for(int i=0; i<json.length(); i++){
-                JSONObject jsonObject = json.getJSONObject(i);
-                DetailedForecast forecast = new DetailedForecast(jsonObject);
-                forecasts.add(forecast);
+        for(int id: cityIds) {
+            DetailedForecast forecast = extractForecast(id);
+
+            if (forecast == null){
+                deleteCityId(id);
+                continue;
             }
 
-            adapter.notifyDataSetChanged();
+            forecasts.add(forecast);
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+    private DetailedForecast extractForecast(int id){
+        String forecastJsonString = app.sharedPreferences().getDetailedForecast(id);
+        try{
+            JSONObject forecastJson = new JSONObject(forecastJsonString);
+            DetailedForecast forecast = new DetailedForecast(forecastJson);
+
+            return forecast;
         }catch (Exception e){}
+
+        return null;
     }
 
     private void requestForecasts(ArrayList<DetailedForecast> forecasts){
-        ArrayList<Integer> cityIds = new ArrayList<>();
+        ArrayList<java.lang.Integer> cityIds = new ArrayList<>();
         for(DetailedForecast forecast: forecasts){
             cityIds.add(forecast.id);
         }
@@ -130,21 +175,54 @@ public class CityForecastPresenter implements Presenter {
     }
 
     private void requestForecasts(String cityIds){
+        clockLatestRequest();
+
         weatherService.requestGetWeatherByCityIds(this, cityIds);
     }
 
-    public void receiveWeatherForecasts(ArrayList<DetailedForecast> forecasts){
-        this.forecasts.clear();
-        this.forecasts.addAll(forecasts);
+    private void requestForecast(String cityName){
+        clockLatestRequest();
 
-        app.sharedPreferences().persistForecasts(forecasts);
+        weatherService.requestGetWeatherByName(this, cityName);
+    }
+
+    public void receiveWeatherForecasts(ArrayList<DetailedForecast> forecasts){
+        if(forecasts == null)
+            return;
+
+        persistForecasts(forecasts);
+        clockLatestRequest();
+
+        HashSet<Integer> cityIds = extractPersistedCityIds();
+        extractForecasts(cityIds);
 
         adapter.notifyDataSetChanged();
     }
 
-    private String joinToString(ArrayList<Integer> cityIds){
+    public void requestError(){
+        clockLatestRequest();
+    }
+
+    private void clockLatestRequest(){
+        app.sharedPreferences().setLatestRequest(new Date().getTime());
+    }
+
+    private void persistForecasts(ArrayList<DetailedForecast> forecasts){
+        HashSet<Integer> ids = extractPersistedCityIds();
+        for(DetailedForecast forecast: forecasts){
+            ids.add(forecast.id);
+        }
+
+        app.sharedPreferences().setCityIds(joinToString(ids));
+
+        for(DetailedForecast forecast: forecasts){
+            app.sharedPreferences().persistForecast(forecast);
+        }
+    }
+
+    private String joinToString(ArrayList<java.lang.Integer> cityIds){
         StringBuffer result = new StringBuffer();
-        for(Integer id: cityIds){
+        for(java.lang.Integer id: cityIds){
             result.append(id + ",");
         }
         String idsString = result.toString().substring(0, result.toString().length()-1);
@@ -152,16 +230,14 @@ public class CityForecastPresenter implements Presenter {
         return idsString;
     }
 
-    private Boolean checkLatestRequest(){
-        Long latestRequestLong = app.sharedPreferences().latestRequest();
+    private String joinToString(HashSet<Integer> cityIds){
+        StringBuffer result = new StringBuffer();
+        for(Integer id: cityIds){
+            result.append(id + ",");
+        }
+        String idsString = result.toString().substring(0, result.toString().length()-1);
 
-        Date currentDate = new Date();
-
-        Long deltaTime = currentDate.getTime() - latestRequestLong;
-        Long deltaMinutes = TimeUnit.MILLISECONDS.toMinutes(deltaTime);
-
-        boolean hasEnoughTimeElapsed = deltaMinutes >= 10;
-        return hasEnoughTimeElapsed;
+        return idsString;
     }
 
     private void setUpAdapters(){
@@ -192,7 +268,7 @@ public class CityForecastPresenter implements Presenter {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String cityName = cityNameView.getText().toString();
-                        //todo
+                        requestForecast(cityName);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -211,7 +287,19 @@ public class CityForecastPresenter implements Presenter {
     }
 
     private void deleteCity(DetailedForecast forecast){
-        //todo
+        deleteCityId(forecast.id);
+
+        app.sharedPreferences().deleteForecast(forecast);
+
+        forecasts.remove(forecast);
+
+        adapter.notifyDataSetChanged();
+    }
+
+    private void deleteCityId(int id){
+        HashSet<Integer> cityIds = extractPersistedCityIds();
+        cityIds.remove(id);
+        app.sharedPreferences().setCityIds(joinToString(cityIds));
     }
 
     private void disableInput(boolean disable){
@@ -230,6 +318,9 @@ public class CityForecastPresenter implements Presenter {
     }
 
     private void bindForecast(CityForecastViewHolder holder, final DetailedForecast forecast){
+        if(forecast == null)
+            return;
+
         holder.setTemperatureText(forecast.main.temp+"°F");
         holder.setCityText(forecast.toString());
         if(isEditingCities){
