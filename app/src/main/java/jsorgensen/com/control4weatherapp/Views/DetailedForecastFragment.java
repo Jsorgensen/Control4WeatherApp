@@ -9,18 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import jsorgensen.com.control4weatherapp.Presenters.CityForecastPresenter;
+import jsorgensen.com.control4weatherapp.Presenters.DetailedForecastPresenter;
 import jsorgensen.com.control4weatherapp.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CityForecastsFragment.OnFragmentInteractionListener} interface
+ * {@link DetailedForecastFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CityForecastsFragment#newInstance} factory method to
+ * Use the {@link DetailedForecastFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CityForecastsFragment extends Fragment {
+public class DetailedForecastFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -31,11 +31,10 @@ public class CityForecastsFragment extends Fragment {
     private String mParam2;
     private OnFragmentInteractionListener mListener;
 
+    private DetailedForecastPresenter detailedForecastPresenter;
     public Bundle activityState;
-    public boolean requestData = false;
-    private CityForecastPresenter cityForecastPresenter;
 
-    public CityForecastsFragment() {
+    public DetailedForecastFragment() {
         // Required empty public constructor
     }
 
@@ -45,11 +44,11 @@ public class CityForecastsFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment CityForecastsFragment.
+     * @return A new instance of fragment DetailedForecastFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CityForecastsFragment newInstance(String param1, String param2) {
-        CityForecastsFragment fragment = new CityForecastsFragment();
+    public static DetailedForecastFragment newInstance(String param1, String param2) {
+        DetailedForecastFragment fragment = new DetailedForecastFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,41 +64,22 @@ public class CityForecastsFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        cityForecastPresenter = new CityForecastPresenter(this);
+        detailedForecastPresenter = new DetailedForecastPresenter(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_city_forecasts, container, false);
+        return inflater.inflate(R.layout.fragment_detailed_forecast, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        cityForecastPresenter.start();
-        if(requestData){
-            cityForecastPresenter.requestData();
-        }else{
-            cityForecastPresenter.unBundle(activityState);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        cityForecastPresenter.resume();
-    }
-
-    public void unBundleData(Bundle bundle){
-        cityForecastPresenter.unBundle(bundle);
-    }
-
-    public Bundle bundleData(){
-        return cityForecastPresenter.bundle();
+        detailedForecastPresenter.start();
+        detailedForecastPresenter.unBundle(activityState);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

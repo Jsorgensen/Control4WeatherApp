@@ -13,5 +13,7 @@ public class App extends Application {
         super.onCreate();
     }
 
-    SharedPreferences sharedPreferences;
+    private static SharedPreferences sharedPreferences;
+
+    public SharedPreferences sharedPreferences(){ return sharedPreferences; }
 }

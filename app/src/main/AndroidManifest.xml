@@ -20,7 +20,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".Controllers.DetailedForecastActivity" />
-        <activity android:name=".Controllers.App"></activity>
 
         <meta-data
             android:name="preloaded_fonts"

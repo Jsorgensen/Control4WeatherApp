@@ -12,7 +12,7 @@ public class Clouds implements Parcelable{
         extractJSON(json);
     }
 
-    int coverage;
+    public int coverage;
 
     private void extractJSON(JSONObject json){
         try{

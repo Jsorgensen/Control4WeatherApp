@@ -24,9 +24,22 @@ public class CityForecastsActivity extends AppCompatActivity implements CityFore
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.flPanel, cityForecastsFragment)
                 .commit();
+
+        if(savedInstanceState != null){
+            cityForecastsFragment.activityState = savedInstanceState.getBundle("cityForecastsFragment");
+        }else{
+            cityForecastsFragment.requestData = true;
+        }
     }
 
     CityForecastsFragment cityForecastsFragment;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBundle("cityForecastsFragment", cityForecastsFragment.bundleData());
+
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {

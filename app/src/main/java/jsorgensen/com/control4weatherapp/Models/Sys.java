@@ -12,7 +12,7 @@ public class Sys implements Parcelable {
         extractJSON(json);
     }
 
-    String country;
+    public String country;
 
     private void extractJSON(JSONObject json){
         try{

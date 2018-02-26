@@ -2,8 +2,10 @@ package jsorgensen.com.control4weatherapp.Adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
+import jsorgensen.com.control4weatherapp.Presenters.CityForecastPresenter;
 import jsorgensen.com.control4weatherapp.R;
 import jsorgensen.com.control4weatherapp.Views.CityForecastViewHolder;
 
@@ -18,8 +20,8 @@ public class CityForecastAdapter extends RecyclerView.Adapter<CityForecastViewHo
 
     @Override
     public CityForecastViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        CityForecastViewHolder view = LayoutInflater.from(presenter.fragment.getActivity()).inflate(R.layout.city_forecast_headline, parent);
-        return presenter.onCreateViewHolder(parent, viewType);
+        View view = LayoutInflater.from(presenter.fragment.getActivity()).inflate(R.layout.city_forecast_headline, parent, false);
+        return new CityForecastViewHolder(view);
     }
 
     @Override

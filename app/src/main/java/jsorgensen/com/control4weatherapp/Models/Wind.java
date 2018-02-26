@@ -12,8 +12,8 @@ public class Wind implements Parcelable{
         extractJSON(json);
     }
 
-    double speed;
-    double degrees;
+    public double speed;
+    public double degrees;
 
     protected Wind(Parcel in) {
         try{

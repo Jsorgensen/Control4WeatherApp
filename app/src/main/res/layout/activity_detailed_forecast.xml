@@ -6,4 +6,9 @@
     android:layout_height="match_parent"
     tools:context="jsorgensen.com.control4weatherapp.Controllers.DetailedForecastActivity">
 
+    <FrameLayout
+        android:id="@+id/flDetailedForecastPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </android.support.constraint.ConstraintLayout>

@@ -14,7 +14,7 @@ public class Weather implements Parcelable {
         extractJSON(json);
     }
 
-    ArrayList<WeatherDescription> descriptions;
+    public ArrayList<WeatherDescription> descriptions;
 
     protected Weather(Parcel in) {
         try{

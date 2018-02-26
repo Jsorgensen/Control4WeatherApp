@@ -12,9 +12,9 @@ public class Main implements Parcelable{
         extractJSON(json);
     }
 
-    double temp, tempMin, tempMax;
-    double pressure;
-    int humidity;
+    public double temp, tempMin, tempMax;
+    public double pressure;
+    public int humidity;
 
     protected Main(Parcel in) {
         try{

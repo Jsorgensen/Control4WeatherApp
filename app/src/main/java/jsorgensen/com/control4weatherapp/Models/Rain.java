@@ -12,7 +12,7 @@ public class Rain implements Parcelable{
         extractJSON(json);
     }
 
-    Double last3HoursRainFall;
+    public Double last3HoursRainFall;
 
     private void extractJSON(JSONObject json){
         try{
@@ -31,21 +31,16 @@ public class Rain implements Parcelable{
     }
 
     protected Rain(Parcel in) {
-        if (in.readByte() == 0) {
-            last3HoursRainFall = null;
-        } else {
-            last3HoursRainFall = in.readDouble();
-        }
+        try{
+            String jsonString = in.readString();
+            JSONObject json = new JSONObject(jsonString);
+            extractJSON(json);
+        }catch (Exception e){}
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        if (last3HoursRainFall == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeDouble(last3HoursRainFall);
-        }
+        dest.writeString(toJSON().toString());
     }
 
     @Override

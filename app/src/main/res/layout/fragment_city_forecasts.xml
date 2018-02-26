@@ -5,18 +5,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="jsorgensen.com.control4weatherapp.Views.CityForecastsFragment">
 
-     <jsorgensen.com.control4weatherapp.Views.FilterSpinner
-         android:id="@+id/citiesFilterSpinner"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"/>
-
       <android.support.v7.widget.RecyclerView
           android:id="@+id/citiesRecyclerView"
           android:layout_width="0dp"
           android:layout_height="0dp"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/citiesFilterSpinner"
+          app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintBottom_toBottomOf="parent"/>
+
+      <ProgressBar
+          android:id="@+id/citiesProgressBar"
+          android:layout_width="155dp"
+          android:layout_height="155dp"
+          android:visibility="gone"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintVertical_bias="0.25" />
 
 </android.support.constraint.ConstraintLayout>

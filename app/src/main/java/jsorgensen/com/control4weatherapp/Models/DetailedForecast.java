@@ -13,17 +13,22 @@ public class DetailedForecast implements Parcelable {
         extractJSON(json);
     }
 
-    int id;
-    int timeStamp;
-    String cityName;
-    Sys sys;
-    Coordinates coordinates;
-    Weather weather;
-    Main main;
-    Wind wind;
-    Clouds clouds;
-    Rain rain;
-    Snow snow;
+    public int id;
+    public int timeStamp;
+    public String cityName;
+    public Sys sys;
+    public Coordinates coordinates;
+    public Weather weather;
+    public Main main;
+    public Wind wind;
+    public Clouds clouds;
+    public Rain rain;
+    public Snow snow;
+
+    @Override
+    public String toString() {
+        return cityName + ", " + sys.country;
+    }
 
     private void extractJSON(JSONObject json){
         try{
@@ -44,12 +49,10 @@ public class DetailedForecast implements Parcelable {
             JSONObject jsonSnow = json.optJSONObject("snow");
             if(jsonSnow != null)
                 snow = new Snow(jsonSnow);
-        }catch(Exception e){
-
-        }
+        }catch(Exception e){}
     }
 
-    JSONObject toJSON(){
+    public JSONObject toJSON(){
         JSONObject json = new JSONObject();
 
         try{
@@ -57,7 +60,7 @@ public class DetailedForecast implements Parcelable {
             json.put("dt", timeStamp);
             json.put("name", cityName);
             json.put("sys", sys.toJSON());
-            json.put("coordinates", coordinates.toJSON());
+            json.put("coord", coordinates.toJSON());
             json.put("weather", weather.toJSON());
             json.put("main", main.toJSON());
             json.put("wind", wind.toJSON());

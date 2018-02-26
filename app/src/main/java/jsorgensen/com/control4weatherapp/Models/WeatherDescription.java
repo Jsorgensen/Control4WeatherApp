@@ -12,9 +12,9 @@ public class WeatherDescription implements Parcelable{
         extractJSON(json);
     }
 
-    int id;
-    String description;
-    String icon;
+    public int id;
+    public String description;
+    public String icon;
 
     protected WeatherDescription(Parcel in) {
         try{
