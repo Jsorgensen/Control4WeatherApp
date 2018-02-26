@@ -175,6 +175,9 @@ public class CityForecastPresenter implements Presenter {
     }
 
     private void requestForecasts(String cityIds){
+        if(cityIds.equals(""))
+            return;
+
         clockLatestRequest();
 
         weatherService.requestGetWeatherByCityIds(this, cityIds);
@@ -225,9 +228,10 @@ public class CityForecastPresenter implements Presenter {
         for(java.lang.Integer id: cityIds){
             result.append(id + ",");
         }
-        String idsString = result.toString().substring(0, result.toString().length()-1);
-
-        return idsString;
+        if(result.length() > 0)
+            return result.toString().substring(0, result.toString().length()-1);
+        else
+            return "";
     }
 
     private String joinToString(HashSet<Integer> cityIds){
