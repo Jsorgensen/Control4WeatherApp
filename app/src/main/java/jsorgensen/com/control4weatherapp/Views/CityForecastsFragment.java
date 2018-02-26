@@ -102,6 +102,14 @@ public class CityForecastsFragment extends Fragment {
         return cityForecastPresenter.bundle();
     }
 
+    public void onAddCityClick(){
+        cityForecastPresenter.addCity();
+    }
+
+    public void onEditCityClick(){
+        cityForecastPresenter.editCity();
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

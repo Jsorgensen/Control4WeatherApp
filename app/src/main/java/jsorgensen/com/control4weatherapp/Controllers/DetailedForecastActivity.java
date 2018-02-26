@@ -26,6 +26,13 @@ public class DetailedForecastActivity extends AppCompatActivity implements Detai
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBundle("detailedForecastFragment", detailedForecastFragment.bundleData());
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onFragmentInteraction(Uri uri) {
 
     }

@@ -2,13 +2,18 @@ package jsorgensen.com.control4weatherapp.Presenters;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.squareup.picasso.Picasso;
 
@@ -42,6 +47,7 @@ public class CityForecastPresenter implements Presenter {
     private CityForecastAdapter adapter;
     public int getCount(){ return forecasts.size(); }
     private boolean enableClick = true;
+    private boolean isEditingCities = false;
 
     public CityForecastPresenter(CityForecastsFragment fragment){
         this.fragment = fragment;
@@ -176,6 +182,38 @@ public class CityForecastPresenter implements Presenter {
         disableInput(false);
     }
 
+    public void addCity(){
+        ConstraintLayout layout = (ConstraintLayout)LayoutInflater.from(activity).inflate(R.layout.add_city, null);
+        final EditText cityNameView = layout.findViewById(R.id.addCityNameEditText);
+
+        new AlertDialog.Builder(activity).setTitle("Add City")
+                .setView(layout)
+                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String cityName = cityNameView.getText().toString();
+                        //todo
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
+
+    public void editCity(){
+        isEditingCities = !isEditingCities;
+
+        adapter.notifyDataSetChanged();
+    }
+
+    private void deleteCity(DetailedForecast forecast){
+        //todo
+    }
+
     private void disableInput(boolean disable){
         if(disable){
             fragment.getView().findViewById(R.id.citiesProgressBar).setVisibility(View.VISIBLE);
@@ -194,8 +232,19 @@ public class CityForecastPresenter implements Presenter {
     private void bindForecast(CityForecastViewHolder holder, final DetailedForecast forecast){
         holder.setTemperatureText(forecast.main.temp+"°F");
         holder.setCityText(forecast.toString());
-        String iconURL = Constants.WEATHER_ICON_URL.replace("<WEATHER_ICON>", forecast.weather.descriptions.get(0).icon);
-        Picasso.with(activity).load(iconURL).into(holder.iconImageView);
+        if(isEditingCities){
+            int resID = activity.getResources().getIdentifier("ic_delete", "drawable", activity.getPackageName());
+            holder.iconImageView.setImageResource(resID);
+            holder.iconImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteCity(forecast);
+                }
+            });
+        }else{
+            String iconURL = Constants.WEATHER_ICON_URL.replace("<WEATHER_ICON>", forecast.weather.descriptions.get(0).icon);
+            Picasso.with(activity).load(iconURL).into(holder.iconImageView);
+        }
 
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override

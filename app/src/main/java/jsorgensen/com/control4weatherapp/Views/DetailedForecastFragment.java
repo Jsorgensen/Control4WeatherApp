@@ -82,6 +82,10 @@ public class DetailedForecastFragment extends Fragment {
         detailedForecastPresenter.unBundle(activityState);
     }
 
+    public Bundle bundleData(){
+        return detailedForecastPresenter.bundle();
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

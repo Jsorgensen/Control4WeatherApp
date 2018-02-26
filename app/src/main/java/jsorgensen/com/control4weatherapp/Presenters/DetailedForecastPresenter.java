@@ -2,7 +2,6 @@ package jsorgensen.com.control4weatherapp.Presenters;
 
 
 import android.app.Activity;
-import android.media.Image;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,7 +9,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import jsorgensen.com.control4weatherapp.Models.DetailedForecast;
 import jsorgensen.com.control4weatherapp.R;
@@ -61,19 +59,19 @@ public class DetailedForecastPresenter implements Presenter {
         ((TextView)fragment.getView().findViewById(R.id.detailedForecastMinTextView)).setText("Min\n" + forecast.main.tempMin + "°F");
         ((TextView)fragment.getView().findViewById(R.id.detailedForecastMaxTextView)).setText("Max\n" + forecast.main.tempMax + "°F");
         ((TextView)fragment.getView().findViewById(R.id.detailedForecastCityTextView)).setText(forecast.cityName);
-        String timeStamp = new SimpleDateFormat("DDD MMM dd HH:mm aa").format(forecast.timeStamp);
+        String timeStamp = new SimpleDateFormat("EEEE MMM dd hh:mm aa").format(forecast.timeStamp);
         ((TextView)fragment.getView().findViewById(R.id.detailedForecastTimeTextView)).setText(timeStamp);
         String iconURL = Constants.WEATHER_ICON_URL.replace("<WEATHER_ICON>", forecast.weather.descriptions.get(0).icon);
         Picasso.with(activity).load(iconURL).into(((ImageView)fragment.getView().findViewById(R.id.detailedForecastIconImageView)));
         ((TextView)fragment.getView().findViewById(R.id.detaildForecastDescriptionTextView)).setText(forecast.weather.descriptions.get(0).description);
-        ((TextView)fragment.getView().findViewById(R.id.detailedForecastPressureTextView)).setText("Pressure: " + forecast.main.pressure);
-        ((TextView)fragment.getView().findViewById(R.id.detailedForecastHumidityTextView)).setText("Humidity: " + forecast.main.humidity);
-        ((TextView)fragment.getView().findViewById(R.id.detailedForecastWindSpeedTextView)).setText("Wind Speed: " + forecast.wind.speed);
+        ((TextView)fragment.getView().findViewById(R.id.detailedForecastPressureTextView)).setText("Pressure: " + forecast.main.pressure + "mb");
+        ((TextView)fragment.getView().findViewById(R.id.detailedForecastHumidityTextView)).setText("Humidity: " + forecast.main.humidity + "%");
+        ((TextView)fragment.getView().findViewById(R.id.detailedForecastWindSpeedTextView)).setText("Wind Speed: " + forecast.wind.speed + "mph");
         if(forecast.clouds != null)
-            ((TextView)fragment.getView().findViewById(R.id.detaildForecastCloudsTextView)).setText("Cloud Coverage: " + forecast.clouds.coverage);
+            ((TextView)fragment.getView().findViewById(R.id.detaildForecastCloudsTextView)).setText("Cloud Coverage: " + forecast.clouds.coverage + "%");
         if(forecast.rain != null)
-            ((TextView)fragment.getView().findViewById(R.id.detaildForecastRainTextView)).setText("Inches of Rain Fall for last 3 hours: " + forecast.rain.last3HoursRainFall);
+            ((TextView)fragment.getView().findViewById(R.id.detaildForecastRainTextView)).setText("Rain Fall for last 3 hours: " + forecast.rain.last3HoursRainFall + "in.");
         if(forecast.snow != null)
-            ((TextView)fragment.getView().findViewById(R.id.detaildForecastSnowTextView)).setText("Inches of Snow Fall for last 3 hours: " + forecast.snow.last3HoursSnowFall);
+            ((TextView)fragment.getView().findViewById(R.id.detaildForecastSnowTextView)).setText("Snow Fall for last 3 hours: " + forecast.snow.last3HoursSnowFall + "in.");
     }
 }
