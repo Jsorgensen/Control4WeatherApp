@@ -88,7 +88,7 @@ public class CityForecastPresenter implements Presenter {
             setPresets();
         }else{
             if(hasLastRequestTimeElapsed()){
-                requestForecasts(forecasts);
+                requestForecasts(joinToString(cityIds));
             }else{
                 try{
                     extractForecasts(cityIds);
@@ -143,7 +143,6 @@ public class CityForecastPresenter implements Presenter {
             DetailedForecast forecast = extractForecast(id);
 
             if (forecast == null){
-                deleteCityId(id);
                 continue;
             }
 
